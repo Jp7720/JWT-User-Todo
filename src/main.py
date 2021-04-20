@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Todo
+from models import db, User, Characters, Planets, Favorites
 #from models import Person
 
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
@@ -127,34 +127,86 @@ def delete_usuarios(id):
     
 #                to do list
    
-@app.route('/todo', methods=['GET'])
-def listarTodos():
-    todos = Todo.query.all()
-    request = list(map(lambda todo:todo.serialize(),todo))    
+# @app.route('/todo', methods=['GET'])
+# def listarTodos():
+#     todos = Todo.query.all()
+#     request = list(map(lambda todo:todo.serialize(),todo))    
+#     return jsonify(request), 200
+
+# @app.route('/todo/<int:id>', methods=['GET'])
+# def listarItem(id):
+#     #todo1 = Todo.query.get(id)
+#     todo1 = Todo.query.filter_by(id=id).first()
+#     if todo1 is None:
+#         return APIException({"message": "No se encontro el item"},status_code=404)
+#     request = todo1.serialize()
+#     return jsonify(request), 200
+
+# @app.route('/todo', methods=['POST'])
+# def crearTodo():
+#     return jsonify("Metodo Post"), 200
+
+# @app.route('/todo', methods=['PUT'])
+# def updateTodo():
+#     return jsonify("Metodo PUT"), 200
+
+# @app.route('/todo', methods=['DELETE'])
+# def deleteTodo():
+#     return jsonify("Metodo DELETE"), 200
+
+########### characters ##############################
+@app.route('/characters', methods=['GET'])  #aquí especificamos la ruta para el endpoint y especificamos que este endpoint acepta solicitudes GET
+def getcharacters():                           #este método se llamará cuando el cliente haga el request
+    personas = Characters.query.all()
+    request = list(map(lambda x: x.serialize(), personas))
+    return jsonify( request), 200 
+    #request = list(map(lambda user:user.serialize(),user))    
+    #return jsonify(request), 200
+
+        
+@app.route('/characters/<int:id>', methods=['GET'])
+def list_characters(id):
+    #user = User.query.get(id)
+    characters= Characters.query.filter_by(id=id).first()
+    if characters is None:
+        raise APIException("Message:No se encontro el user",status_code=404)
+    request = characters.serialize()
     return jsonify(request), 200
 
-@app.route('/todo/<int:id>', methods=['GET'])
-def listarItem(id):
-    #todo1 = Todo.query.get(id)
-    todo1 = Todo.query.filter_by(id=id).first()
-    if todo1 is None:
-        return APIException({"message": "No se encontro el item"},status_code=404)
-    request = todo1.serialize()
+@app.route('/planets', methods=['GET'])  #aquí especificamos la ruta para el endpoint y especificamos que este endpoint acepta solicitudes GET
+def getplanets():                   #este método se llamará cuando el cliente haga el request
+    planetas = Planets.query.all()
+    request = list(map(lambda x: x.serialize(), planetas))
+    return jsonify(request), 200 
+    #request = list(map(lambda user:user.serialize(),user))    
+    #return jsonify(request), 
+
+@app.route('/planets/<int:id>', methods=['GET'])
+def list_planets(id):
+    #user = User.query.get(id)
+    planets= Planets.query.filter_by(id=id).first()
+    if planets is None:
+        raise APIException("Message:No se encontro el user",status_code=404)
+    request = planets.serialize()
     return jsonify(request), 200
 
-@app.route('/todo', methods=['POST'])
-def crearTodo():
-    return jsonify("Metodo Post"), 200
-
-@app.route('/todo', methods=['PUT'])
-def updateTodo():
-    return jsonify("Metodo PUT"), 200
-
-@app.route('/todo', methods=['DELETE'])
-def deleteTodo():
-    return jsonify("Metodo DELETE"), 200
 
 
+
+@app.route('/favorites', methods=['GET'])  #aquí especificamos la ruta para el endpoint y especificamos que este endpoint acepta solicitudes GET
+def getFavorites():                   #este método se llamará cuando el cliente haga el request
+    favoritos = Favorites.query.all()
+    request = list(map(lambda x: x.serialize(), favoritos))
+    return jsonify(request), 200 
+
+@app.route('/favorites/<int:id>', methods=['GET'])
+def list_favorites(id):
+    #user = User.query.get(id)
+    favorites= Favorites.query.filter_by(id=id).first()
+    if favorites is None:
+        raise APIException("Message:No se encontro el user",status_code=404)
+    request = favorites.serialize()
+    return jsonify(request), 200
 
 
 
