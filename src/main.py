@@ -156,7 +156,7 @@ def delete_usuarios(id):
 
 ########### characters ##############################
 @app.route('/characters', methods=['GET'])  #aquí especificamos la ruta para el endpoint y especificamos que este endpoint acepta solicitudes GET
-def getcharacters():                           #este método se llamará cuando el cliente haga el request
+def getcharacters():                        #este método se llamará cuando el cliente haga el request
     personas = Characters.query.all()
     request = list(map(lambda x: x.serialize(), personas))
     return jsonify( request), 200 
@@ -172,6 +172,88 @@ def list_characters(id):
         raise APIException("Message:No se encontro el user",status_code=404)
     request = characters.serialize()
     return jsonify(request), 200
+
+@app.route('/characters', methods=["POST"])
+def crear_personajes():
+    data = request.get_json()
+    characters = Characters(name=data["name"],height=data["height"],mass=data["mass"],birth_year=data["birth_year"],
+    hair_color=data["hair_color"],skin_color=data["skin_color"],eye_color=data["eye_color"],gender=data["gender"])
+    db.session.add(characters)
+    db.session.commit()
+    return jsonify("Message : Se adiciono un usuario!"),200
+
+@app.route('/charto', methods=["POST"])
+def log():
+    if request.method == "POST":
+        name = request.json["name"]
+        height = request.json["height"]
+        mass = request.json["mass"]
+        birth_year = request.json["birth_year"]
+        hair_color = request.json["hair_color"]
+        gender = request.json["gender"]
+        skin_color = request.json["skin_color"]
+        eye_color = request.json["eye_color"]
+
+        # Validate
+        if not name:
+            return jsonify({"error": "username Invalid"}), 400
+        if not height:
+            return jsonify({"error": "Password Invalid"}), 400
+        if not mass:
+            return jsonify({"error": "mass Invalid"}), 400
+        if not birth_year:
+            return jsonify({"error": "birth_year"}), 400
+        if not hair_color:
+            return jsonify({"error": "hair_color Invalid"}), 400
+        if not gender:
+            return jsonify({"error": "gender Invalid"}), 400
+        if not skin_color:
+            return jsonify({"error": "skin_color Invalid"}), 400
+        if not eye_color:
+            return jsonify({"error": "eye_color Invalid"}), 400
+        
+        characters = Characters.query.filter_by(name=name).first()
+
+        # if not user:
+        #     return jsonify({"error": "User not found"}), 400
+        #if not check_password_hash(user.password, password):
+        #    return jsonify({"error": "Wrong password"}), 400
+        
+        # Create Access Token
+        expiration_date = datetime.timedelta(days=1)
+        #expiration_date = datetime.timedelta(minutes=1)
+        access_token = create_access_token(identity=name, expires_delta=expiration_date)
+        request_body = {
+            "characters": characters.serialize(),
+            "token": access_token
+        }
+        return jsonify(request_body), 200
+
+@app.route('/characters/<id>', methods=["PUT"])
+@jwt_required()
+def update_personajes(id):
+    request_body = request.get_json()
+    characters = Characters.query.get(id)
+    if characters is None:
+        raise APIException("usuario no existe!", status_code=404)
+    
+    if "mass" in request_body:
+        characters.mass = request_body["mass"]
+    if "name" in request_body:
+        characters.name = request_body["name"]
+
+    db.session.commit()
+    
+    return jsonify("usuario Update, OK!"),200
+
+   
+
+
+
+
+###########################################################################################################################################################################3
+
+
 
 @app.route('/planets', methods=['GET'])  #aquí especificamos la ruta para el endpoint y especificamos que este endpoint acepta solicitudes GET
 def getplanets():                   #este método se llamará cuando el cliente haga el request
@@ -189,6 +271,12 @@ def list_planets(id):
         raise APIException("Message:No se encontro el user",status_code=404)
     request = planets.serialize()
     return jsonify(request), 200
+
+
+
+
+
+
 
 
 
