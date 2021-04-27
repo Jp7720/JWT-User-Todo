@@ -36,14 +36,14 @@ def handle_invalid_usage(error):
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
-#login---------------------------------------------------------
+###########login##########################################
 @app.route('/login', methods=["POST"])
 def login():
     if request.method == "POST":
         username = request.json["email"]
         password = request.json["password"]
 
-        # Validate
+        # Validacion
         if not username:
             return jsonify({"error": "username Invalid"}), 400
         if not password:
@@ -51,15 +51,10 @@ def login():
         
         user = User.query.filter_by(email=username).first()
 
-        # if not user:
-        #     return jsonify({"error": "User not found"}), 400
         
-        #if not check_password_hash(user.password, password):
-        #    return jsonify({"error": "Wrong password"}), 400
-        
-        # Create Access Token
+        # Creacion del token
         expiration_date = datetime.timedelta(days=1)
-        #expiration_date = datetime.timedelta(minutes=1)
+        
         access_token = create_access_token(identity=username, expires_delta=expiration_date)
 
         request_body = {
@@ -75,13 +70,11 @@ def handle_hello():                   #este método se llamará cuando el client
     people_query = User.query.all()
     all_people = list(map(lambda x: x.serialize(), people_query))
     return jsonify(all_people), 200 
-    #request = list(map(lambda user:user.serialize(),user))    
-    #return jsonify(request), 200
+    
 
         
 @app.route('/user/<int:id>', methods=['GET'])
 def lista_usuario(id):
-    #user = User.query.get(id)
     user = User.query.filter_by(id=id).first()
     if user is None:
         raise APIException("Message:No se encontro el user",status_code=404)
@@ -121,38 +114,8 @@ def delete_usuarios(id):
     db.session.delete(user1)
     db.session.commit()
     return jsonify({"Proceso realizado con exito por el usuario:" : current_user}),200
-    #return jsonify("Registro eliminado,ok!"),200
-
-#####################################################################################################
     
-#                to do list
    
-# @app.route('/todo', methods=['GET'])
-# def listarTodos():
-#     todos = Todo.query.all()
-#     request = list(map(lambda todo:todo.serialize(),todo))    
-#     return jsonify(request), 200
-
-# @app.route('/todo/<int:id>', methods=['GET'])
-# def listarItem(id):
-#     #todo1 = Todo.query.get(id)
-#     todo1 = Todo.query.filter_by(id=id).first()
-#     if todo1 is None:
-#         return APIException({"message": "No se encontro el item"},status_code=404)
-#     request = todo1.serialize()
-#     return jsonify(request), 200
-
-# @app.route('/todo', methods=['POST'])
-# def crearTodo():
-#     return jsonify("Metodo Post"), 200
-
-# @app.route('/todo', methods=['PUT'])
-# def updateTodo():
-#     return jsonify("Metodo PUT"), 200
-
-# @app.route('/todo', methods=['DELETE'])
-# def deleteTodo():
-#     return jsonify("Metodo DELETE"), 200
 
 ########### characters ##############################
 @app.route('/characters', methods=['GET'])  #aquí especificamos la ruta para el endpoint y especificamos que este endpoint acepta solicitudes GET
@@ -160,13 +123,11 @@ def getcharacters():                        #este método se llamará cuando el 
     personas = Characters.query.all()
     request = list(map(lambda x: x.serialize(), personas))
     return jsonify( request), 200 
-    #request = list(map(lambda user:user.serialize(),user))    
-    #return jsonify(request), 200
+   
 
         
 @app.route('/characters/<int:id>', methods=['GET'])
 def list_characters(id):
-    #user = User.query.get(id)
     characters= Characters.query.filter_by(id=id).first()
     if characters is None:
         raise APIException("Message:No se encontro el user",status_code=404)
@@ -194,7 +155,7 @@ def log():
         skin_color = request.json["skin_color"]
         eye_color = request.json["eye_color"]
 
-        # Validate
+        # Validacion
         if not name:
             return jsonify({"error": "username Invalid"}), 400
         if not height:
@@ -214,14 +175,8 @@ def log():
         
         characters = Characters.query.filter_by(name=name).first()
 
-        # if not user:
-        #     return jsonify({"error": "User not found"}), 400
-        #if not check_password_hash(user.password, password):
-        #    return jsonify({"error": "Wrong password"}), 400
-        
-        # Create Access Token
+        # Creacion token
         expiration_date = datetime.timedelta(days=1)
-        #expiration_date = datetime.timedelta(minutes=1)
         access_token = create_access_token(identity=name, expires_delta=expiration_date)
         request_body = {
             "characters": characters.serialize(),
@@ -256,16 +211,14 @@ def update_personajes(id):
 
 
 @app.route('/planets', methods=['GET'])  #aquí especificamos la ruta para el endpoint y especificamos que este endpoint acepta solicitudes GET
-def getplanets():                   #este método se llamará cuando el cliente haga el request
+def getplanets():                         #este método se llamará cuando el cliente haga el request
     planetas = Planets.query.all()
     request = list(map(lambda x: x.serialize(), planetas))
     return jsonify(request), 200 
-    #request = list(map(lambda user:user.serialize(),user))    
-    #return jsonify(request), 
+     
 
 @app.route('/planets/<int:id>', methods=['GET'])
 def list_planets(id):
-    #user = User.query.get(id)
     planets= Planets.query.filter_by(id=id).first()
     if planets is None:
         raise APIException("Message:No se encontro el user",status_code=404)
@@ -289,7 +242,6 @@ def getFavorites():                   #este método se llamará cuando el client
 
 @app.route('/favorites/<int:id>', methods=['GET'])
 def list_favorites(id):
-    #user = User.query.get(id)
     favorites= Favorites.query.filter_by(id=id).first()
     if favorites is None:
         raise APIException("Message:No se encontro el user",status_code=404)
